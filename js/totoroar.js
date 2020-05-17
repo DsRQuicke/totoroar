@@ -766,7 +766,8 @@ function handleSelectDelayed() {
 		// hit.
 		// Note: We use the same inputPose again, so RaycasterWrapper
 		// doesn't need to calculate the Ray's position and direction.
-		if ( !gotVirtualHit ) {
+		// Note: Also only try to raycast the model when it's visible.
+		if ( !gotVirtualHit && g_modelMesh.visible ) {
 			// Note: We try to test for a hit on the "Totoro"
 			// submesh, because otherwise the hit would also trigger
 			// for the "Nut" submesh (since their both part of
