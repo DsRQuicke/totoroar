@@ -377,7 +377,7 @@ function setupXRSession() {
 					g_modelMesh.add(new THREE.AxesHelper(2));
 				}
 
-				g_roarObj = createRoarObject(0.1, g_texMgr.getTexture("roar"), 2);
+				g_roarObj = createRoarObject(0.1, g_texMgr.getTexture("roar"), 2.25, 0.666);
 				g_scene.add(g_roarObj);
 
 				g_raycaster = new RaycasterWrapper(g_scene);
@@ -1340,19 +1340,21 @@ function handleModelHit(hit) {
  *	@param {Array.<number>} endPos - (optional) The end position of the animation, as a three-element array. Default [0, 0, 1].
  *	@param {Array.<number>} startScale - (optional) The scale to start the animation at, as a three-element array. Default [1, 1, 1].
  *	@param {Array.<number>} endScale - (optional) The scale to end the animation at, as a three-element array. Default [5, 5, 5].
+ *	@param {number} maxOpacity - (optional) The maximum opacity to use. Default 1.0.
  *	@see https://threejs.org/examples/js/animation/AnimationClipCreator.js
  */
-function createRoarAnimationClip(duration, startPos, endPos, startScale, endScale) {
+function createRoarAnimationClip(duration, startPos, endPos, startScale, endScale, maxOpacity) {
 	duration = duration || 1.0;
 	startPos = startPos || [0, 0, 0];
 	endPos = endPos || [0, 0, 1];
 	startScale = startScale || [1, 1, 1];
 	endScale = endScale || [5, 5, 5];
+	maxOpacity = maxOpacity || 1.0;
 
 	const tracks = [];
 
 	let times = [0, 0.25 * duration, 0.75 * duration, 1 * duration];
-	let values = [0, 1, 1, 0];
+	let values = [0, maxOpacity, maxOpacity, 0];
 	let trackName = ".material.opacity"; // ".material[0].opacity"
 	tracks.push(new THREE.NumberKeyframeTrack(trackName, times, values));
 
@@ -1373,7 +1375,7 @@ function createRoarAnimationClip(duration, startPos, endPos, startScale, endScal
 	return new THREE.AnimationClip("roar", duration, tracks);
 }
 
-function createRoarObject(size, texture, animationDuration) {
+function createRoarObject(size, texture, animationDuration, opacity) {
 	size = size || 0.1;
 	const geom = new THREE.PlaneBufferGeometry(size, size, 1, 1);
 	// Note: Since we'll want to modify the opacity, we need to set the
@@ -1386,7 +1388,7 @@ function createRoarObject(size, texture, animationDuration) {
 	const roarObj = new THREE.Mesh(geom, mat);
 	roarObj.visible = false;
 	roarObj.name = "roarObj";
-	const roarClip = createRoarAnimationClip(animationDuration);
+	const roarClip = createRoarAnimationClip(animationDuration, null, null, null, null, opacity);
 	roarObj.animations = [roarClip];
 
 	// Create a parent object. This way the animation on the `roarObj`
