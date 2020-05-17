@@ -1,0 +1,346 @@
+/* Univeral box sizing with inheritance */
+html {
+	box-sizing: border-box;
+}
+*, *:before, *:after {
+	box-sizing: inherit;
+}
+body {
+	margin: 0;
+	padding: 0;
+
+	font-family: "Open Sans", "Verdana", sans-serif;
+}
+
+#container {
+	position: relative;
+	width: 100vw;
+	height: 100vh;
+	display: grid;
+	grid-template-columns: auto;
+	grid-template-rows: repeat(4, 1fr);
+	justify-items: center;
+	align-items: center;
+
+	background: rgb(32, 32, 32);
+	background: radial-gradient(circle, rgb(202, 189, 154) 15%, rgb(103, 98, 94) 60%)
+
+}
+
+#container > canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+}
+
+#msg_panel {
+	position: absolute;
+	bottom: 0;
+	min-height: 15%;
+	width: 100%;
+	display: none;
+	background-color: rgb(255, 255, 255);
+	padding: 5px;
+	border: 2px solid rgb(0, 0, 0);
+}
+#msg_panel.active {
+	display: block;
+}
+
+/* Remove most of the default button styling for this page. */
+button {
+	/* Note: Prevents the button from "moving" when active under Chrome. */
+	padding: 0;
+	/* Note: Buttons don't inherit the font-family by default. */
+	font-family: inherit;
+	border: none;
+}
+button:focus {
+	/* Disable Chorme's outline on button focus */
+	outline-style: none;
+}
+button::-moz-focus-inner {
+	/* Disable Firefox's dotted border on button focus */
+	/* Firefox uses a different approach to "highlight" focus.
+	 * Note: Grouping this selector with the above :focus one for some
+	 * reason causes Chrome to not take the :focus selector into account, so
+	 * we need to specify it separately.
+	 */
+	border: 0;
+}
+button:active {
+	transform: scale(1.05);
+}
+
+.invisible_btn {
+	background-color: transparent;
+	width: auto;
+	height: auto;
+}
+
+/**************
+ * Info panel *
+ **************/
+#btn_info {
+	/* The lower two rows. */
+	grid-row: 3 / span 2;
+	/* Force the item to be placed in the first column, and thus overlap
+	 * with #logos_container. If we don't provide a grid-column
+	 * definition, the grid's auto-placement algorithm will try to prevent
+	 * overlapping, and will thus place this item in a new column (because
+	 * it would overlap with #logos_container).
+	 */
+	grid-column: 1;
+	width: 2cm;
+	height: 2cm;
+	background-color: rgb(202, 189, 154);
+	border: 3px solid rgb(80, 66, 68);
+	border-radius: 50%;
+	color: rgb(80, 66, 68);
+	font-size: 1cm;
+	font-weight: bold;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	/* Needed to make sure to make sure the grid cells above it don't
+	 * overlay the top part of the button (preventing the click event from
+	 * being fired).
+	 */
+	z-index: 0;
+}
+#btn_info:hover {
+	filter: brightness(1.25);
+}
+#btn_info:focus {
+	/* -webkit-focus-ring-color */
+	box-shadow: 0 0 0 1px rgb(77, 144, 254);
+}
+
+#info_panel_container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	display: none;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(32, 32, 32, 0.75);
+}
+#info_panel_container.active {
+	display: flex;
+}
+#info_panel {
+	max-width: 95vw;
+	max-height: 95vh;
+	padding: 1vw;
+	background-color: rgb(202, 189, 154);
+	border: 3px solid rgb(80, 66, 68);
+	border-radius: 10px;
+	overflow-x: auto;
+}
+
+.icon_list {
+	display: flex;
+	flex-direction: column;
+}
+.icon_list_item {
+	display: flex;
+}
+.icon_list_item img {
+	width: 69px;
+	height: 69px;
+	margin-right: 13px;
+}
+
+#btnSoundsLbl {
+	float: right;
+	margin-right: 30px;
+}
+
+#bottom_row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+}
+#bottom_row img {
+	max-width: 100px;
+	max-height: 100px;
+}
+#drop_coin {
+	color: black;
+}
+#drop_coin:hover, #drop_coin:focus, #drop_coin:visited {
+	color: rgb(80, 66, 68);
+	text-decoration: underline;
+}
+#drop_coin div {
+	display: inline-block;
+	text-align: right;
+	margin-right: 5px;
+}
+#drop_coin span {
+	font-size: smaller;
+}
+#drop_coin img {
+	vertical-align: top;
+}
+
+/********
+ * Logo *
+ ********/
+#logos_container {
+	grid-row: 2 / span 2; /* The middle two rows. */
+	/* Needed so the grid's auto-placement doesn't place it in a new column
+	 * in an attempt to prevent overlapping (with #btn_info).
+	 */
+	grid-column: 1;
+	position: relative;
+	width: 100vw;
+	height: 50vh;
+}
+.abs_center_wrapper {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+}
+
+.hidden, #container.hidden, #gift_container.hidden, .temp_hidden {
+	display: none;
+}
+
+/***************
+ * Logo common *
+ ***************/
+#error_text, #loading_text, #enter_text {
+	margin: 0;
+	text-align: center;
+	font-weight: bold;
+	font-size: 4vh;
+	font-variant: small-caps;
+}
+#logo_base, #logo_error, #logo_loading, #logo_enter {
+	width: 50vw;
+}
+.logo_wrapper {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+/*************
+ * Logo base *
+ *************/
+#logo_base {
+	filter: brightness(0);
+}
+/**************
+ * Logo error *
+ **************/
+#error_text {
+	color: rgb(192, 0, 0);
+	text-shadow: 0 0 5px rgb(0, 0, 0);
+}
+#logo_error {
+	animation: 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate logo_error_anim;
+}
+@keyframes logo_error_anim {
+	0% {
+		filter: drop-shadow(0 0 3px rgb(32, 32, 32)) brightness(0);
+	}
+	100% {
+		filter: drop-shadow(0 0 10px rgb(32, 32, 32)) brightness(0);
+	}
+}
+/*************
+ * Logo load *
+ *************/
+#loading_text {
+	color: rgb(103, 98, 94);
+	text-shadow: 0 0 5px rgb(106, 114, 118);
+}
+.loading_finished #loading_wrapper {
+	animation: 1s linear 1 forwards load_finish_anim;
+}
+@keyframes load_finish_anim {
+	/* Note: We don't specify a 0%/from keyframe. This way the animation
+	 * will start from the currently applied values.
+	 */
+	100% {
+		filter: opacity(0);
+	}
+}
+#logo_loading {
+	/*animation-name: logo_load_anim;
+	animation-duration: 1.5s;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;*/
+	animation: 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate logo_load_anim;
+}
+.loading_finished #logo_loading {
+	/* Pause the logo_load_anim in its current state. */
+	animation-play-state: paused;
+}
+@keyframes logo_load_anim {
+	0% {
+		filter: drop-shadow(0 0 3px rgb(255, 255, 255)) brightness(0.7);
+	}
+	100% {
+		filter: drop-shadow(0 0 10px rgb(255, 255, 255)) brightness(1.0);
+	}
+}
+/**************
+ * Logo enter *
+ **************/
+#enter_text {
+	color: rgb(32, 32, 32);
+	text-shadow: 0 0 5px rgb(192, 0, 0);
+	margin-top: 8vh;
+}
+#enter_wrapper {
+	filter: opacity(0);
+}
+.loading_finished #enter_wrapper {
+	animation: 1s linear 1 forwards enter_show_anim;
+}
+@keyframes enter_show_anim {
+	0% {
+		filter: opacity(0);
+	}
+	100% {
+		filter: opacity(1);
+	}
+}
+.loading_finished #logo_enter {
+	animation: 0.666s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate logo_enter_anim;
+}
+.loading_finished #logo_enter:hover {
+	/* Increase the glow pulsing speed. */
+	animation-duration: 0.333s;
+}
+/* Note: The brightness(), sepia(), hue-rotate and staturate() filters are
+ * needed to convert the white logo to the correct color.
+ * Partly based on:
+ * https://www.domysee.com/blogposts/coloring-white-images-css-filter
+ * Also see the hsbColorFinder.html for how we found the correct parameters
+ * after the sepia() filter.
+ */
+@keyframes logo_enter_anim {
+	0% {
+		filter: brightness(0.5) sepia(1) hue-rotate(333deg) saturate(0.25) brightness(0.64) drop-shadow(0 0 3px rgb(103, 98, 94)) brightness(0.75);
+	}
+	100% {
+		filter: brightness(0.5) sepia(1) hue-rotate(333deg) saturate(0.25) brightness(0.64) drop-shadow(0 0 10px rgb(103, 98, 94)) brightness(1);
+	}
+}
+

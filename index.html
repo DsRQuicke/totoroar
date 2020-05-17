@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="author" content="Quicke DsR">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Totoro AR</title>
+	<link rel="icon" type="image/png" href="assets/favicon-32.png" sizes="32x32">
+	<link href="css/totoroar.css" rel="stylesheet">
+	<script src="js/lib/three-r116.min.js"></script>
+	<script src="js/lib/GLTFLoader-r116.min.js"></script>
+	<script src="js/AnimationManager.js"></script>
+	<script src="js/AudioManager.js"></script>
+	<script src="js/HUD.js"></script>
+	<script src="js/RaycasterWrapper.js"></script>
+	<script src="js/Recticle.js"></script>
+	<script src="js/ActionStateManager.js"></script>
+	<script src="js/TextureManager.js"></script>
+	<script src="js/totoroar.js"></script>
+</head>
+<body>
+	<div id="container">
+		<div id="msg_panel"></div>
+		<div id="logos_container">
+			<div class="abs_center_wrapper">
+				<img id="logo_base" src="assets/marks.svg">
+			</div>
+			<div id="error_wrapper" class="hidden logo_wrapper">
+				<div class="abs_center_wrapper">
+					<img id="logo_error" src="assets/marks.svg">
+				</div>
+				<div class="abs_center_wrapper">
+					<p id="error_text">Error<br>Intializing<br>WebXR</p>
+				</div>
+			</div>
+			<div id="loading_wrapper" class="hidden logo_wrapper">
+				<div class="abs_center_wrapper">
+					<img id="logo_loading" src="assets/marks.svg">
+				</div>
+				<div class="abs_center_wrapper">
+					<p id="loading_text">Loading<br>Resources</p>
+				</div>
+			</div>
+			<div id="enter_wrapper" class="hidden logo_wrapper">
+				<div class="abs_center_wrapper">
+					<button id="btn_enter_ar" class="invisible_btn" disabled>
+						<img id="logo_enter" src="assets/marks.svg">
+					</button>
+				</div>
+			</div>
+		</div>
+		<button id="btn_info">?</button>
+	</div>
+	<div id="info_panel_container">
+		<div id="info_panel">
+			<p>After the resources have loaded and when WebXR and its AR module are available, you can enter the AR experience by pressing the glowing logo. The first time you do this, the browser will ask for permission to start an AR session. Once you're in AR mode, and a sufficiently stable 3D map of the environment is available (see <em>Move device</em> below), a recticle will be shown. When you then touch the screen, the model will be placed at the location of the recticle. The recticle will now be hidden until the model is removed again.</p>
+			<p>The following UI elements are available:</p>
+			<div class="icon_list">
+				<div class="icon_list_item">
+					<img src="assets/icon_exit.png">
+					<p><b><em>Exit AR</em></b>: Press this to exit the AR experience.</p>
+				</div>
+				<div class="icon_list_item">
+					<img src="assets/icon_remove.png">
+					<p><b><em>Remove model</em></b>: Removes the model. The recticle will be activated again, so the model can be placed at another location.<br>
+					This button is only enabled when the model has been placed.</p>
+				</div>
+				<div class="icon_list_item">
+					<img src="assets/icon_scale.png">
+					<p><b><em>Toggle scale</em></b>: Toggles the model between normal and full size.<br>
+					This button is only enabled when the model has been placed.</p>
+				</div>
+				<div class="icon_list_item">
+					<img src="assets/icon_umbrella.png">
+					<p><b><em>Umbrella</em></b>: Take out or put away umbrella.<br>
+					This button is only enabled when the model has been placed.</p>
+				</div>
+				<div class="icon_list_item">
+					<img src="assets/icon_whistle.png">
+					<p><b><em>Whistle</em></b>: Start or stop whistling.<br>
+					This button is only enabled when the model has been placed.</p>
+				</div>
+				<div class="icon_list_item">
+					<img src="assets/icon_move.png">
+					<p><b><em>Move device</em></b>: This icon indicates that the user should move their device around to help build the underlying environment map.<br>
+					To be able to perform AR hit tests, the underlying AR framework first needs to understand the environment near the user. It does this by progressively building up a 3D map while the device is moved through the environment. To expedite this process, the icon is shown to encourage the user to move their device around. A well lit environment additionally improves this process.<br>
+					Note that no recticle will be shown until enough environment information is available. Also note that if you point or move your device to a new part of the environment, then this icon might be shown again while the environment map is being expanded.</p>
+				</div>
+				<p>This app uses the AR module of the WebXR standard. Since that module is fairly new, your browser might not yet support it. Or you might have to enable it explicitly. Chrome v81 and up should support it out of the box.</p>
+			</div>
+			<div id="bottom_row">
+				<a id="drop_coin" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UBXDLAFBW424J&source=url" title="PayPal - The safer, easier way to pay online!"><div>If you like what I made, feel free to<br>drop me some coin!<span> (via PayPal)</span></div><img src="assets/coin.svg" alt="Donate with PayPal button"></a>
+				<a href="https://github.com/DsRQuicke/totoroar"><img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png" title="Totoro AR GitHub repository" alt="Totoro AR GitHub repository"></a>
+				<label id="btnSoundsLbl"><input type="checkbox" id="btnSounds" checked title="Enables or disables the sound of the UI buttons">Enable button sounds.</label>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
