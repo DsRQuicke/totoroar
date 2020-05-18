@@ -231,10 +231,14 @@ class AudioManager {
 // TODO <<<
 
 	/**	Stops playback of all audio.
+	 *	@param {Array.<string>} [except=[]] - An array of sound names
+	 *	that should not be stopped.
 	 */
-	stopAll() {
+	stopAll(except=[]) {
 		for ( const name of Object.keys(this.audioCache) ) {
-			this.stopAudio(name);
+			if ( !except.includes(name) ) {
+				this.stopAudio(name);
+			}
 		}
 	}
 

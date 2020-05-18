@@ -1100,9 +1100,10 @@ function setupUIButtons() {
 			_resetAngerData(g_modelMesh);
 			// And stop any animation.
 			stopModelAnimations();
-			// Also stop playback of any audio.
+			// Also stop playback of any audio. Except for any
+			// button push sounds that are playing.
 			if ( g_audioMgr ) {
-				g_audioMgr.stopAll();
+				g_audioMgr.stopAll(["btn_pos", "btn_neg"]);
 			}
 
 			// Re-enable the recticle when the model is "delete"-ed.
