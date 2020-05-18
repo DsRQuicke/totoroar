@@ -142,6 +142,9 @@ button:active {
 	border-radius: 10px;
 	overflow-x: auto;
 }
+#info_panel p {
+	margin: 0.5em 0;
+}
 
 .icon_list {
 	display: flex;
