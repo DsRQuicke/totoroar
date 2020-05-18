@@ -53,7 +53,7 @@
 	</div>
 	<div id="info_panel_container">
 		<div id="info_panel">
-			<p>After the resources have loaded and when WebXR and its AR module are available, you can enter the AR experience by pressing the glowing logo. The first time you do this, the browser will ask for permission to start an AR session. Once you're in AR mode, and a sufficiently stable 3D map of the environment is available (see <em>Move device</em> below), a recticle will be shown. When you then touch the screen, the model will be placed at the location of the recticle. The recticle will now be hidden until the model is removed again.</p>
+			<p>When all resources are loaded and the AR module of WebXR is available, you can enter the AR experience by pressing the glowing logo. The first time you do this, the browser will ask for permission to start an AR session. Once you're in AR mode, move your device around until a recticle is shown (see <em>Move device</em> below). When you then touch the screen, the model will be placed at the recticle's location. The recticle will now be hidden until the model is removed again.</p>
 			<p>The following UI elements are available:</p>
 			<div class="icon_list">
 				<div class="icon_list_item">
@@ -83,10 +83,10 @@
 				<div class="icon_list_item">
 					<img src="assets/icon_move.png">
 					<p><b><em>Move device</em></b>: This icon indicates that the user should move their device around to help build the underlying environment map.<br>
-					To be able to perform AR hit tests, the underlying AR framework first needs to understand the environment near the user. It does this by progressively building up a 3D map while the device is moved through the environment. To expedite this process, the icon is shown to encourage the user to move their device around. A well lit environment additionally improves this process.<br>
-					Note that no recticle will be shown until enough environment information is available. Also note that if you point or move your device to a new part of the environment, then this icon might be shown again while the environment map is being expanded.</p>
+					For AR to work, the browser's underlying AR framework needs to understand the real world near the user. It does this by progressively creating a 3D map while moving the device through the environment. To expedite this, the icon is shown to encourage the user to move their device around. A well lit environment also helps this process.<br>
+					Note that if you point or move your device to a new part of the environment, then the icon might be shown again while the environment map is being expanded.</p>
 				</div>
-				<p>This app uses the AR module of the WebXR standard. Since that module is fairly new, your browser might not yet support it. Or you might have to enable it explicitly. Chrome v81 and up should support it out of the box.</p>
+				<p>Since the AR module of the WebXR standard is fairly new, your browser might not yet support it; or you might have to enable it explicitly. Chrome v81 and up should support it out of the box.</p>
 			</div>
 			<div id="bottom_row">
 				<a id="drop_coin" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UBXDLAFBW424J&source=url" title="PayPal - The safer, easier way to pay online!"><div>If you like what I made, feel free to<br>drop me some coin!<span> (via PayPal)</span></div><img src="assets/coin.svg" alt="Donate with PayPal button"></a>
