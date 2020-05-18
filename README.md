@@ -21,7 +21,7 @@ The 3rd party code is of course licensed under the license of their respective o
 - [Three.js](https://github.com/mrdoob/three.js/)
 
 ### Assets
-Aside from the assets listed below, the assets in this project are licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/) <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a>.
+Aside from the assets listed below, the assets in this project are licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/) <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"/></a>.
 
 The following files *might* not be covered by the CC BY-SA license:
 
