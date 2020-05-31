@@ -495,17 +495,6 @@ class AnimationManager {
 			window.clearTimeout(this.timerId);
 			this.timerId = 0;
 		}
-		// FIX >>> stopAllAction() doesn't call
-		// FIX --- binding.restoreOriginalState() like Action.stop()
-		// FIX --- does. And if this isn't called it seems that somehow
-		// FIX --- when we "delete"(/hide) the model (which causes
-		// FIX --- stopAllAction() to be called) and then place it back,
-		// FIX --- then the model will still have its old pose for one
-		// FIX --- frame before jumping to the new animation state.
-		for ( let i = 0; i !== this.animMxr._nActiveBindings; ++i ) {
-			this.animMxr._bindings[i].restoreOriginalState();
-		}
-		// FIX <<<
 		this.animMxr.stopAllAction();
 		this.currentBaseAnimInfo = null;
 		this.animQueue = [];
