@@ -173,6 +173,7 @@ function loadResources() {
 		g_texMgr.loadTexture("icon_whistle", "assets/icon_whistle.png"),
 		g_texMgr.loadTexture("recticle", "assets/recticle_1.png"),
 		g_texMgr.loadTexture("recticle_alt", "assets/recticle_2.png"),
+		g_texMgr.loadTexture("shadowBlob", "assets/shadowBlob.png"),
 		// This will assign the `g_gltfModelRig`.
 		loadGltfModel("assets/totoro.glb"),
 		g_audioMgr.loadAudio("nopoke", "assets/nopoke.ogg"),
@@ -353,6 +354,33 @@ function setupXRSession() {
 					g_modelMesh.userData.isDefaultSize = true;
 				}
 				g_modelMesh.visible = false;
+
+				// Add a fake shadow blob.
+				// First get the model size.
+				const boxSize = new THREE.Vector3();
+				const bbox = new THREE.Box3();
+				let modelForSize = g_modelMesh.getObjectByName("Totoro");
+				if ( !modelForSize ) {
+					console.warn("Failed to find Totoro object for shadow blob size. Falling back to `g_modelMesh` itself.");
+					modelForSize = g_modelMesh;
+				}
+				bbox.setFromObject(modelForSize).getSize(boxSize);
+				// Create a plane (approximately) the size of
+				// the model.
+				// Note: The bounding box is calculated for the
+				// geometry in its default pose, which for the
+				// Totoro model causes the bounding box to be
+				// somewhat larger then the model's idle pose.
+				// So we slightly decrease the plane size.
+				const fsbGeom = new THREE.PlaneBufferGeometry(boxSize.x * 0.9, boxSize.z * 0.9, 1, 1);
+				fsbGeom.rotateX(-Math.PI / 2);
+				const fsbMat = new THREE.MeshBasicMaterial();
+				fsbMat.map = g_texMgr.getTexture("shadowBlob");
+				fsbMat.transparent = true;
+				// And add the shadow blob plane to the
+				// `g_modelMesh` group object (which is scaled).
+				g_modelMesh.add(new THREE.Mesh(fsbGeom, fsbMat));
+
 				g_scene.add(g_modelMesh);
 
 				// Setup some lighting.
