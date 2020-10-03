@@ -237,6 +237,16 @@ function loadGltfModel(filepath) {
 			console.error("Failed to attach nut to AP.");
 		}
 
+		// By default the material seems to be DoubleSide, which isn't needed
+		// for the Nut and the Totoro model.
+		if ( subObj ) {
+			subObj.material.side = THREE.FrontSide;
+		}
+		subObj = root.getObjectByName("Totoro");
+		if ( subObj ) {
+			subObj.material.side = THREE.FrontSide;
+		}
+
 		// Setup animation stuff.
 		// We add the AnimationMixer and the gltfModel as userData
 		// properties, so we can access the animations later on.
@@ -266,7 +276,6 @@ function loadGltfModel(filepath) {
 
 function setupXRSession() {
 	if ( !g_xrSession ) {
-		// TODO Check if there were any WebXR Hittest API updates.
 		// Need to request hit-test upon session request. See example:
 		// https://web.dev/ar-hit-test/
 		navigator.xr.requestSession("immersive-ar", {
