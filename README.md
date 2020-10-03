@@ -14,7 +14,7 @@ Feel free to [drop me some coin (via PayPal)](https://www.paypal.com/cgi-bin/web
 
 ## License
 ### Code
-All code (except the 3rd party code in `js/lib/` is licensed under the MIT License (which is also included in the [LICENSE](LICENSE) file).
+All code (except the 3rd party code in `js/lib/`) is licensed under the MIT License (which is also included in the [LICENSE](LICENSE) file).
 
 The 3rd party code is of course licensed under the license of their respective owners:
 
@@ -30,5 +30,5 @@ These sound snippets were taken from the original Totoro movie.
 - `assets/roar.png`  
 The picture that was used in this image was dowloaded from [hero.fandom.com](https://hero.fandom.com/wiki/Totoro). Although the site itself applies a CC BY-SA license, and the image is widespread on the internet, its actual license is not clear to me.
 
-Note also that the Totoro model in this project (`assets/totoro.glb`) is based on the [Totoro model](https://cults3d.com/en/3d-model/art/totoro-family-my-neighbor-totoro) created by [Patrick Fanart](https://www.facebook.com/PatrickFanart.HK). Although the latter model is licensed under a [CC BY-NC-ND](https://creativecommons.org/licenses/by-nc-nd/3.0/) license, permission was granted by the author to share the my derived model in this project. (Thank you very much for that!)
+Note also that the Totoro model in this project (`assets/totoro.glb`) is based on the [Totoro model](https://cults3d.com/en/3d-model/art/totoro-family-my-neighbor-totoro) created by [Patrick Fanart](https://www.facebook.com/PatrickFanart.HK). Although the latter model is licensed under a [CC BY-NC-ND](https://creativecommons.org/licenses/by-nc-nd/3.0/) license, permission was granted by the author to share my derived model in this project. (Thank you very much for that!)
 
