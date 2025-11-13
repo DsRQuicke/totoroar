@@ -279,11 +279,15 @@ function setupXRSession() {
 		// Need to request hit-test upon session request. See example:
 		// https://web.dev/ar-hit-test/
 		navigator.xr.requestSession("immersive-ar", {
-			requiredFeatures: ["local", "hit-test"]
+			requiredFeatures: ["local", "hit-test", "anchors"]
 		})
 		.then((xrSession) => {
 			if ( !xrSession.requestHitTestSource ) {
 				showMsg("HitTesting unavailable. Aborting...", "error");
+				xrSession.end();
+				return;
+			} else if ( !xrSession.enabledFeatures.includes("anchors") ) {
+				showMsg("Anchors unavailable. Aborting...", "error");
 				xrSession.end();
 				return;
 			}
@@ -363,6 +367,7 @@ function setupXRSession() {
 					g_modelMesh.userData.isDefaultSize = true;
 				}
 				g_modelMesh.visible = false;
+				g_modelMesh.userData.anchor = null;
 
 				// Add a fake shadow blob.
 				// First get the model size.
@@ -702,6 +707,37 @@ function onXRFrame(hrTime, xrFrame) {
 	// is), we postpone actually handling the event until here (i.e. after
 	// the camera is also updated with the most recent pose information).
 	handleSelectDelayed();
+
+	handleAnchorUpdate(xrFrame);
+}
+
+function handleAnchorUpdate(xrFrame) {
+	const trackedAnchors = xrFrame.trackedAnchors;
+	const anchor = g_modelMesh.userData.anchor;
+	if ( anchor ) {
+		// If the anchor is no longer tracked, then delete it and re-enable the recticle.
+		if ( !trackedAnchors.has(anchor) ) {
+			console.log("Anchor not tracked, deleting anchor and re-enabling recticle");
+			deleteActionCallback();
+			return;
+		}
+		const anchorPose = xrFrame.getPose(anchor.anchorSpace, g_xrRefSpace);
+		if ( !anchorPose ) {
+			console.error("Anchor pose not found");
+			return;
+		}
+		g_modelMesh.position.copy(anchorPose.transform.position);
+		// Only rotate the model the first time it's anchored. I.e. before we make it visible.
+		if ( !g_modelMesh.visible ) {
+			let lookAtPos = new THREE.Vector3();
+			// Note: Needs the camera's `matrix` to be set.
+			lookAtPos.setFromMatrixPosition(g_camera.matrix);
+			// Rotate `g_modelMesh` towards the camera, but keep it upright
+			// by using the mesh's own y coordinate in lookAt().
+			g_modelMesh.lookAt(lookAtPos.x, g_modelMesh.position.y, lookAtPos.z);
+		}
+		g_modelMesh.visible = true;
+	}
 }
 
 /**	In this callback we just get the input's pose and store it in a
@@ -849,24 +885,25 @@ function handleSelectDelayed() {
 	// "stable".
 	if ( g_recticle.isStable ) {
 		// Note: Instead of performing a new hit test when the screen
-		// is touched, we just reuse the recticle's current position.
+		// is touched, we just reuse the recticle's last hit test result.
 		// If the model should be placed depending on where at the
 		// screen the touch was registered, then we would need to do
 		// a new hit test here, that is cast from the touch location.
-		// Note: If the recticle is stable, then it will also have a
-		// position.
-		let recticlePos = g_recticle.getPosition();
-		g_modelMesh.position.copy(recticlePos);
-		let lookAtPos = new THREE.Vector3();
-		// Note: Needs the camera's `matrix` to be set.
-		lookAtPos.setFromMatrixPosition(g_camera.matrix);
-		// Rotate `g_modelMesh` towards the camera, but keep it upright
-		// by using the mesh's own y coordinate in lookAt().
-		g_modelMesh.lookAt(lookAtPos.x, g_modelMesh.position.y, lookAtPos.z);
-		g_modelMesh.visible = true;
+		// Use the last hit test result to create an XRAnchor at the recticle position.
+		// We then later use the anchor's position to update the model's position.
+		let lastHitTestResult = g_recticle.lastHitTestResult;
+		if ( lastHitTestResult ) {
+			lastHitTestResult.createAnchor().then((anchor) => {
+				console.debug("Created anchor", anchor);
+				g_modelMesh.userData.anchor = anchor;
+			}).catch((err) => {
+				console.error("Failed to create anchor", err);
+			});
+		}
 
 		// Disable the recticle when the model has been placed (until
 		// that model is "delete"-ed via the UI).
+		// Note: This also clears the last hit test result.
 		g_recticle.disable();
 		// Randomly swap the recticle for when it is shown again after
 		// the model gets deleted.
@@ -1110,6 +1147,48 @@ function initActionStates() {
 	});
 }
 
+function deleteActionCallback() {
+	if ( g_modelMesh && g_modelMesh.visible ) {
+		const anchor = g_modelMesh.userData.anchor;
+		if ( anchor ) {
+			anchor.delete();
+			g_modelMesh.userData.anchor = null;
+		}
+		g_modelMesh.visible = false;
+		// When the model is "delete"-ed, also reset its
+		// angerData.
+		_resetAngerData(g_modelMesh);
+		// And stop any animation.
+		stopModelAnimations();
+		// Also stop playback of any audio. Except for any
+		// button push sounds that are playing.
+		if ( g_audioMgr ) {
+			g_audioMgr.stopAll(["btn_pos", "btn_neg"]);
+		}
+
+		// Re-enable the recticle when the model is "delete"-ed.
+		// Note that the recticle probably won't be stable
+		// right away after enabling it again.
+		g_recticle.enable();
+
+		// Disable the delete, scale, umbrella and whistle
+		// buttons after the model has been "deleted".
+		g_hud.disableAction("delete");
+		g_hud.disableAction("scale");
+		g_hud.disableAction("umbrella");
+		g_hud.disableAction("whistle");
+
+		// Reset the model's action state.
+		g_actionStateMgr.reset();
+
+		// Also make sure the umbrella is hidden again.
+		const umbrellaObj = g_modelMesh.getObjectByName("ArmatureUmbrella");
+		if ( umbrellaObj ) {
+			umbrellaObj.visible = false;
+		}
+	}
+}
+
 /**	Adds buttons to the HUD and sets up their action callbacks.
  */
 function setupUIButtons() {
@@ -1129,42 +1208,7 @@ function setupUIButtons() {
 	// The "delete" button should start out as disabled. It will be enabled
 	// once the model has been placed.
 	g_hud.disableAction("delete");
-	g_hud.setActionCallback("delete", () => {
-		if ( g_modelMesh && g_modelMesh.visible ) {
-			g_modelMesh.visible = false;
-			// When the model is "delete"-ed, also reset its
-			// angerData.
-			_resetAngerData(g_modelMesh);
-			// And stop any animation.
-			stopModelAnimations();
-			// Also stop playback of any audio. Except for any
-			// button push sounds that are playing.
-			if ( g_audioMgr ) {
-				g_audioMgr.stopAll(["btn_pos", "btn_neg"]);
-			}
-
-			// Re-enable the recticle when the model is "delete"-ed.
-			// Note that the recticle probably won't be stable
-			// right away after enabling it again.
-			g_recticle.enable();
-
-			// Disable the delete, scale, umbrella and whistle
-			// buttons after the model has been "deleted".
-			g_hud.disableAction("delete");
-			g_hud.disableAction("scale");
-			g_hud.disableAction("umbrella");
-			g_hud.disableAction("whistle");
-
-			// Reset the model's action state.
-			g_actionStateMgr.reset();
-
-			// Also make sure the umbrella is hidden again.
-			const umbrellaObj = g_modelMesh.getObjectByName("ArmatureUmbrella");
-			if ( umbrellaObj ) {
-				umbrellaObj.visible = false;
-			}
-		}
-	});
+	g_hud.setActionCallback("delete", deleteActionCallback);
 
 	g_hud.addUIElement(1-spacing-(btnW/2), spacing+btnH/2, "exit", 0xFFFFFF, btnW, btnH, "icon_exit");
 	g_hud.setActionCallback("exit", () => {
