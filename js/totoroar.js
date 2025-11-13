@@ -551,6 +551,10 @@ function onXRSessionEnded() {
 			g_modelMesh.scale.setScalar((1 / g_modelMesh.userData.orgHeight) * g_defModelHeight);
 			g_modelMesh.userData.isDefaultSize = true;
 		}
+		if ( g_modelMesh.userData.anchor != null ) {
+			g_modelMesh.userData.anchor.delete();
+			g_modelMesh.userData.anchor = null;
+		}
 	}
 	stopModelAnimations();
 
