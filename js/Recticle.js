@@ -52,6 +52,7 @@ class Recticle extends EventTarget {
 		this._dbgLine = null;
 		this._dbgGizmo = null;
 		this._viewerHitTestSource = null;
+		this._lastHitTestResult = null;
 
 		//this._rayCaster = null;
 
@@ -66,6 +67,10 @@ class Recticle extends EventTarget {
 			this.dispatchEvent(new CustomEvent("hitteststatechange", { detail: { state: state, oldstate: this._hitteststate } }));
 			this._hitteststate = state;
 		}
+	}
+
+	get lastHitTestResult() {
+		return this._lastHitTestResult;
 	}
 
 	set debug(value) {
@@ -157,6 +162,7 @@ class Recticle extends EventTarget {
 		this._dbgLine.visible = this._debug;
 
 		this.hitteststate = Recticle.HitTestStates.UNSTABLE;
+		this._lastHitTestResult = null;
 	}
 
 	disable() {
@@ -176,6 +182,7 @@ class Recticle extends EventTarget {
 		}
 
 		this.hitteststate = Recticle.HitTestStates.DISABLED;
+		this._lastHitTestResult = null;
 
 		// "Hide" the recticle related objects.
 		this.mesh.visible = false;
@@ -231,11 +238,15 @@ class Recticle extends EventTarget {
 				// Mark that a hitTest was successful.
 				gotHitTest = true;
 
+				this._lastHitTestResult = hit;
+
 				const hitMatrix = new THREE.Matrix4().fromArray(hitPose.transform.matrix);
 				this.mesh.position.setFromMatrixPosition(hitMatrix);
 				// Set the dbgGizmo postion, rotation and scale
 				// according to the hitMatrix.
 				hitMatrix.decompose(this._dbgGizmo.position, this._dbgGizmo.quaternion, this._dbgGizmo.scale);
+			} else {
+				this._lastHitTestResult = null;
 			}
 		}
 
