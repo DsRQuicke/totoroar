@@ -552,7 +552,9 @@ function onXRSessionEnded() {
 			g_modelMesh.userData.isDefaultSize = true;
 		}
 		if ( g_modelMesh.userData.anchor != null ) {
-			g_modelMesh.userData.anchor.delete();
+			// Note: Only clearing the ref. Calling `delete()` on the anchor
+			//       after the session has ended seems to cause a page crash
+			//       in Chrome.
 			g_modelMesh.userData.anchor = null;
 		}
 	}
